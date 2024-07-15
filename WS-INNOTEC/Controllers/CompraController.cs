@@ -34,15 +34,29 @@ namespace WS_INNOTEC.Controllers
             {
                 return BadRequest(result.ErrorMessage);
             }
+        }      
+        
+        [HttpGet("GetByUserId")]
+        public IActionResult GetByUsaerId(int id)
+        {
+            var result = CompraService.GetByUserId(id);
+            if (result.Success)
+            {
+                return Ok(result.Results);
+            }
+            else
+            {
+                return BadRequest(result.ErrorMessage);
+            }
         }
 
         [HttpPost("Insert")]
-        public IActionResult Post([FromBody] Compra compra)
+        public IActionResult Post (int idUsuario, int idProducto)
         {
-            var result = CompraService.Insert(compra);
+            var result = CompraService.Insert(idUsuario,idProducto);
             if (result.Success)
             {
-                return Ok();
+                return Ok(result.Success);
             }
             else
             {

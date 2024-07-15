@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
+using System.Diagnostics.Metrics;
 
 namespace BL
 {
@@ -16,7 +17,21 @@ namespace BL
             {
                 using (var context = new InnotecContext())
                 {
-                    var compras = context.Compras.ToList();
+                    var compras = context.Compras
+                                         .Include(c => c.IdproductoNavigation) 
+                                         .OrderBy(c => c.IdCompra) 
+                                         .Select(c => new {
+                                             IdCompra = c.IdCompra,
+                                             NombreProducto = c.IdproductoNavigation.Nombre,
+                                             DescripcionProducto = c.IdproductoNavigation.DescripcionDelProducto,
+                                             ImagenProducto = c.IdproductoNavigation.ImagenDelProducto,
+                                             Cantidad = c.Cantidad,
+                                             FechaDeCompra = c.FechaDeCompra,
+                                             FechaVencimiento = c.FechaVencimiento,
+                                             Precio = c.IdproductoNavigation.Precio
+                                         })
+                                         .ToList();
+
                     result.Results = compras.Cast<object>().ToList();
                     result.Success = true;
                 }
@@ -39,7 +54,20 @@ namespace BL
             {
                 using (var context = new InnotecContext())
                 {
-                    var compra = context.Compras.FirstOrDefault(c => c.IdCompra == idCompra);
+                    var compra = context.Compras
+                      .Include(c => c.IdproductoNavigation) 
+                      .OrderBy(c => c.IdCompra) 
+                      .Select(c => new {
+                          IdCompra = c.IdCompra,
+                          NombreProducto = c.IdproductoNavigation.Nombre,
+                          DescripcionProducto = c.IdproductoNavigation.DescripcionDelProducto,
+                          ImagenProducto = c.IdproductoNavigation.ImagenDelProducto,
+                          Cantidad = c.Cantidad,
+                          FechaDeCompra = c.FechaDeCompra,
+                          FechaVencimiento = c.FechaVencimiento,
+                          Precio = c.IdproductoNavigation.Precio
+                      })
+                    .FirstOrDefault();
                     if (compra != null)
                     {
                         result.Object = compra;
@@ -62,7 +90,7 @@ namespace BL
             return result;
         }
 
-        public static DL.Result Insert(DL.Compra compra)
+        public static DL.Result GetByUserId(int idUsuario)
         {
             var result = new DL.Result();
 
@@ -70,14 +98,79 @@ namespace BL
             {
                 using (var context = new InnotecContext())
                 {
-                    compra.FechaDeCompra = DateOnly.FromDateTime(DateTime.Now);
-                    compra.FechaVencimiento = DateOnly.FromDateTime(DateTime.Now.AddDays(30));
+                    
+                    var compras = context.Compras
+                                        .Where(c => c.Idusuario == idUsuario)
+                                        .Include(c => c.IdproductoNavigation) 
+                     .OrderBy(c => c.IdCompra) 
+                     .Select(c => new {
+                         IdCompra = c.IdCompra,
+                         NombreProducto = c.IdproductoNavigation.Nombre,
+                         DescripcionProducto = c.IdproductoNavigation.DescripcionDelProducto,
+                         ImagenProducto = c.IdproductoNavigation.ImagenDelProducto,
+                         Cantidad = c.Cantidad,
+                         FechaDeCompra = c.FechaDeCompra,
+                         FechaVencimiento = c.FechaVencimiento,
+                         Precio = c.IdproductoNavigation.Precio
+                     })
+                     .ToList();
 
+                    if (compras != null && compras.Count > 0)
+                    {
+                        result.Results = compras.Cast<object>().ToList(); 
+                        result.Success = true;
+                    }
+                    else
+                    {
+                        result.Success = false;
+                        result.ErrorMessage = "Compra no encontrada.";
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                result.Success = false;
+                result.ErrorMessage = ex.Message;
+                result.Ex = ex;
+            }
 
-                    context.Compras.Add(compra);
+            return result;
+        }
+
+        public static DL.Result Insert(int idUsuario, int idProducto)
+        {
+            var result = new DL.Result();
+            try
+            {
+                using (var context = new InnotecContext())
+                {
+                   
+                    var existingCompra = context.Compras
+                        .FirstOrDefault(c => c.Idusuario == idUsuario && c.Idproducto == idProducto);
+
+                    if (existingCompra != null)
+                    {
+             
+                        existingCompra.Cantidad += 1;
+                    }
+                    else
+                    {
+                  
+                        var newCompra = new DL.Compra
+                        {
+                            Idusuario = idUsuario,
+                            Idproducto = idProducto,
+                            FechaDeCompra = DateOnly.FromDateTime(DateTime.Now),
+                            FechaVencimiento = DateOnly.FromDateTime(DateTime.Now.AddDays(30)),
+                            Cantidad = 1
+                        };
+                        context.Compras.Add(newCompra);
+                    }
+
+                
                     context.SaveChanges();
-                    result.Object = compra;
                     result.Success = true;
+                    result.Object = existingCompra ?? context.Compras.Local.FirstOrDefault(); 
                 }
             }
             catch (Exception ex)

@@ -111,7 +111,8 @@ namespace BL
                          Cantidad = c.Cantidad,
                          FechaDeCompra = c.FechaDeCompra,
                          FechaVencimiento = c.FechaVencimiento,
-                         Precio = c.IdproductoNavigation.Precio
+                         Precio = c.IdproductoNavigation.Precio,
+                         IdProducto = c.Idproducto
                      })
                      .ToList();
 

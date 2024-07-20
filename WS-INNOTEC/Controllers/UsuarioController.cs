@@ -71,7 +71,7 @@ namespace WS_INNOTEC.Controllers
             var result = UsuarioService.Delete(id);
             if (result.Success)
             {
-                return Ok();
+                return Ok(result.Success);
             }
             else
             {

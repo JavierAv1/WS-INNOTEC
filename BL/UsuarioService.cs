@@ -93,7 +93,7 @@ namespace BL
                     usuario.TipoUsuarioIdTipousuario = 1;
                     var salt = CreateSalt(usuario.UserName);
                     usuario.Contraseña = GenerateHash(usuario.Contraseña, salt);
-                    // Crear una nueva instancia de usuario con los datos especificados
+                
                     var newUser = new DL.Usuario
                     {
                         Nombre = usuario.Nombre,

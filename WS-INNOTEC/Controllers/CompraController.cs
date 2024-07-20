@@ -65,12 +65,12 @@ namespace WS_INNOTEC.Controllers
         }
 
         [HttpPut("Update")]
-        public IActionResult Put(int id, [FromBody] Compra compra)
+        public async Task<IActionResult> Update([FromBody] Compra compra)
         {
-            var result = CompraService.Update(id, compra);
+            var result =  CompraService.Update(compra.IdCompra, compra);
             if (result.Success)
             {
-                return Ok();
+                return Ok(result.Success);
             }
             else
             {
@@ -78,13 +78,14 @@ namespace WS_INNOTEC.Controllers
             }
         }
 
+
         [HttpDelete("Delete")]
         public IActionResult Delete(int id)
         {
             var result = CompraService.Delete(id);
             if (result.Success)
             {
-                return Ok();
+                return Ok(result.Success);
             }
             else
             {

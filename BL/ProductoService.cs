@@ -30,9 +30,14 @@ namespace BL
                             Precio = p.Precio,
                             Cantidad = p.Cantidad,
                             ImagenDelProducto = p.ImagenDelProducto,
+                            IdDepartamento = p.IdDepartamento,
+                            IdCategoria = p.IdCategoria,
+                            IdSubcategoria = p.IdSubcategoria,
+                            IdProveedor = p.IdProveedor,
                             Departamento = new { Id = p.IdDepartamentoNavigation.IdDepartamento, Nombre = p.IdDepartamentoNavigation.Nombre },
                             Categoria = new { Id = p.IdCategoriaNavigation.IdCategoria, Nombre = p.IdCategoriaNavigation.Nombre },
-                            Subcategoria = new { Id = p.IdSubcategoriaNavigation.IdSubcategoria, Nombre = p.IdSubcategoriaNavigation.Nombre }
+                            Subcategoria = new { Id = p.IdSubcategoriaNavigation.IdSubcategoria, Nombre = p.IdSubcategoriaNavigation.Nombre },
+                            Proveedor = new { Id = p.IdProveedorNavigation.IdProveedor, Nombre = p.IdProveedorNavigation.Nombre }
                         }).ToList();
 
                     result.Results = products.Cast<object>().ToList();
@@ -72,7 +77,8 @@ namespace BL
                             ImagenDelProducto = p.ImagenDelProducto,
                             Departamento = new { Id = p.IdDepartamentoNavigation.IdDepartamento, Nombre = p.IdDepartamentoNavigation.Nombre },
                             Categoria = new { Id = p.IdCategoriaNavigation.IdCategoria, Nombre = p.IdCategoriaNavigation.Nombre },
-                            Subcategoria = new { Id = p.IdSubcategoriaNavigation.IdSubcategoria, Nombre = p.IdSubcategoriaNavigation.Nombre }
+                            Subcategoria = new { Id = p.IdSubcategoriaNavigation.IdSubcategoria, Nombre = p.IdSubcategoriaNavigation.Nombre },
+                            Proveedor = new { Id = p.IdProveedorNavigation.IdProveedor, Nombre = p.IdProveedorNavigation.Nombre }
                         }).ToList();
 
                     if (product != null)
@@ -109,6 +115,7 @@ namespace BL
                         .Include(p => p.IdDepartamentoNavigation)
                         .Include(p => p.IdCategoriaNavigation)
                         .Include(p => p.IdSubcategoriaNavigation)
+                        .Include(p => p.IdProveedorNavigation)
                         .Select(p => new
                         {
                             IdProductos = p.IdProductos,
@@ -119,7 +126,9 @@ namespace BL
                             ImagenDelProducto = p.ImagenDelProducto,
                             Departamento = new { Id = p.IdDepartamentoNavigation.IdDepartamento, Nombre = p.IdDepartamentoNavigation.Nombre },
                             Categoria = new { Id = p.IdCategoriaNavigation.IdCategoria, Nombre = p.IdCategoriaNavigation.Nombre },
-                            Subcategoria = new { Id = p.IdSubcategoriaNavigation.IdSubcategoria, Nombre = p.IdSubcategoriaNavigation.Nombre }
+                            Subcategoria = new { Id = p.IdSubcategoriaNavigation.IdSubcategoria, Nombre = p.IdSubcategoriaNavigation.Nombre },
+                            Proveedor = new { Id = p.IdProveedorNavigation.IdProveedor, Nombre = p.IdProveedorNavigation.Nombre }
+                           
                         }).FirstOrDefault(p => p.IdProductos == idProducto);
                     if (product != null)
                     {

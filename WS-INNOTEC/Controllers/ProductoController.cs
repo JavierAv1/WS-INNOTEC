@@ -66,7 +66,7 @@ namespace WS_INNOTEC.Controllers
             }
         }
 
-        [HttpPut("Update")]
+        [HttpPost("Update")]
         public IActionResult Put(int id, [FromBody] DL.Producto productoML)
         {
             if (id != productoML.IdProductos)

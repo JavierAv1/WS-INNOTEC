@@ -33,7 +33,8 @@ namespace BL
                             Contraseña = u.Contraseña,
                             Telefono = u.Telefono,
                             Celular = u.Celular,
-                            TipoUsuario = new  { u.TipoUsuarioIdTipousuario , u.TipoUsuarioIdTipousuarioNavigation.TipoUsuario1 },
+                            TipoUsuarioIdTipousuarioNavigation = new 
+                            { u.TipoUsuarioIdTipousuario , u.TipoUsuarioIdTipousuarioNavigation.TipoUsuario1 },
                             FotoDePerfil = u.FotoDePerfil
                         })
                         .ToList();

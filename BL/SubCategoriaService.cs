@@ -15,7 +15,18 @@ namespace BL
             {
                 using (var context = new InnotecContext())
                 {
-                    var subcategorias = context.Subcategoria.ToList();
+                    var subcategorias = context.Subcategoria
+                        .Select(s => new
+                        {
+                            s.IdSubcategoria,
+                            s.Nombre,
+                            s.Descripcion,
+                            s.IdCategoria,
+                            IdCategoriaNavigation = new
+                            {
+                                Nombre = s.IdCategoriaNavigation != null ? s.IdCategoriaNavigation.Nombre : null
+                            }
+                         }).ToList();
                     result.Results = subcategorias.Cast<object>().ToList();
                     result.Success = true;
                 }
@@ -38,7 +49,18 @@ namespace BL
             {
                 using (var context = new InnotecContext())
                 {
-                    var subcategoria = context.Subcategoria.FirstOrDefault(sc => sc.IdSubcategoria == idSubcategoria);
+                    var subcategoria = context.Subcategoria
+                         .Select(s => new
+                         {
+                             s.IdSubcategoria,
+                             s.Nombre,
+                             s.Descripcion,
+                             s.IdCategoria,
+                             IdCategoriaNavigation = new
+                             {
+                                 Nombre = s.IdCategoriaNavigation != null ? s.IdCategoriaNavigation.Nombre : null
+                             }
+                         }).FirstOrDefault(sc => sc.IdSubcategoria == idSubcategoria);
                     if (subcategoria != null)
                     {
                         result.Object = subcategoria;
@@ -85,7 +107,7 @@ namespace BL
             return result;
         }
 
-        public static DL.Result Update(int id,DL.Subcategorium subcategoria)
+        public static DL.Result Update(int id, DL.Subcategorium subcategoria)
         {
             var result = new DL.Result();
 

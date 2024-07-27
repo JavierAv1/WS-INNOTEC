@@ -5,6 +5,11 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllers();
+    //.AddJsonOptions(options =>
+    //{
+    //    options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve;
+    //    options.JsonSerializerOptions.MaxDepth = 64; // Puedes ajustar la profundidad según sea necesario
+    //});
 
 // Configura la cadena de conexión para el contexto de la base de datos
 builder.Services.AddDbContext<InnotecContext>(options =>

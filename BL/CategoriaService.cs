@@ -16,7 +16,19 @@ namespace BL
             {
                 using (var context = new InnotecContext())
                 {
-                    var categorias = context.Categoria.ToList();
+                     var categorias = context.Categoria
+                        .Select(c => new 
+                        {
+                            c.IdCategoria,
+                            c.Nombre,
+                            c.Descripcion,
+                            c.IdDepartamento,
+                            IdDepartamentoNavigation = new
+                            {
+                                Nombre = c.IdDepartamentoNavigation != null ? c.IdDepartamentoNavigation.Nombre : null
+                            }
+                        })
+                        .ToList();
                     result.Results = categorias.Cast<object>().ToList();
                     result.Success = true;
                 }
@@ -39,7 +51,19 @@ namespace BL
             {
                 using (var context = new InnotecContext())
                 {
-                    var categoria = context.Categoria.FirstOrDefault(c => c.IdCategoria == idCategoria);
+                    var categoria = context.Categoria
+                        .Select(c => new
+                        {
+                            c.IdCategoria,
+                            c.Nombre,
+                            c.Descripcion,
+                            c.IdDepartamento,
+                            IdDepartamentoNavigation = new
+                            {
+                                Nombre = c.IdDepartamentoNavigation != null ? c.IdDepartamentoNavigation.Nombre : null
+                            }
+                        })
+                        .FirstOrDefault(c => c.IdCategoria == idCategoria);
                     if (categoria != null)
                     {
                         result.Object = categoria;
@@ -86,7 +110,7 @@ namespace BL
             return result;
         }
 
-        public static DL.Result Update(int id,DL.Categorium categoria)
+        public static DL.Result Update(int id, DL.Categorium categoria)
         {
             var result = new DL.Result();
 

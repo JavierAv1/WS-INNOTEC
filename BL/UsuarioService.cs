@@ -91,7 +91,7 @@ namespace BL
             {
                 using (var context = new InnotecContext())
                 {
-                    usuario.TipoUsuarioIdTipousuario = 1;
+                    usuario.TipoUsuarioIdTipousuario = 3;
                     var salt = CreateSalt(usuario.UserName);
                     usuario.Contraseña = GenerateHash(usuario.Contraseña, salt);
                 
@@ -149,7 +149,7 @@ namespace BL
                         usuarioToUpdate.Sexo = usuario.Sexo;
                         usuarioToUpdate.UserName = usuario.UserName;
                         usuarioToUpdate.Correo = usuario.Correo;
-                        usuarioToUpdate.Contraseña = usuario.Contraseña;
+                        //usuarioToUpdate.Contraseña = usuario.Contraseña;
                         usuarioToUpdate.Telefono = usuario.Telefono;
                         usuarioToUpdate.Celular = usuario.Celular;
                         usuarioToUpdate.TipoUsuarioIdTipousuario = usuario.TipoUsuarioIdTipousuario;

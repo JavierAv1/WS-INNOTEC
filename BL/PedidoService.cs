@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BL
 {
-    public class EnvioService
+    public class PedidoService
     {
         public static DL.Result GetAll()
         {
@@ -15,8 +15,8 @@ namespace BL
             {
                 using (var context = new InnotecContext())
                 {
-                    var envios = context.Envios.ToList();
-                    result.Results = envios.Cast<object>().ToList();
+                    var pedidos = context.Pedidos.ToList();
+                    result.Results = pedidos.Cast<object>().ToList();
                     result.Success = true;
                 }
             }
@@ -30,7 +30,7 @@ namespace BL
             return result;
         }
 
-        public static DL.Result GetById(int idEnvio)
+        public static DL.Result GetById(int idPedido)
         {
             var result = new DL.Result();
 
@@ -38,16 +38,16 @@ namespace BL
             {
                 using (var context = new InnotecContext())
                 {
-                    var envio = context.Envios.FirstOrDefault(e => e.IdEnvio == idEnvio);
-                    if (envio != null)
+                    var pedido = context.Pedidos.FirstOrDefault(p => p.IdPedido == idPedido);
+                    if (pedido != null)
                     {
-                        result.Object = envio;
+                        result.Object = pedido;
                         result.Success = true;
                     }
                     else
                     {
                         result.Success = false;
-                        result.ErrorMessage = "Envío no encontrado.";
+                        result.ErrorMessage = "Pedido no encontrado.";
                     }
                 }
             }
@@ -61,7 +61,7 @@ namespace BL
             return result;
         }
 
-        public static DL.Result Insert(DL.Envio envio)
+        public static DL.Result Insert(DL.Pedido pedido)
         {
             var result = new DL.Result();
 
@@ -69,11 +69,9 @@ namespace BL
             {
                 using (var context = new InnotecContext())
                 {
-                    envio.Status = 1;
-                 
-                    context.Envios.Add(envio);
+                    context.Pedidos.Add(pedido);
                     context.SaveChanges();
-                    result.Object = envio;
+                    result.Object = pedido;
                     result.Success = true;
                 }
             }
@@ -87,7 +85,7 @@ namespace BL
             return result;
         }
 
-        public static DL.Result Update(int id, DL.Envio envio)
+        public static DL.Result Update(int id, DL.Pedido pedido)
         {
             var result = new DL.Result();
 
@@ -95,28 +93,21 @@ namespace BL
             {
                 using (var context = new InnotecContext())
                 {
-                    var envioToUpdate = context.Envios.FirstOrDefault(e => e.IdEnvio == id);
-                    if (envioToUpdate != null)
+                    var pedidoToUpdate = context.Pedidos.FirstOrDefault(p => p.IdPedido == id);
+                    if (pedidoToUpdate != null)
                     {
-                        envioToUpdate.CodigoPostal = envio.CodigoPostal;
-                        envioToUpdate.Estado = envio.Estado;
-                        envioToUpdate.Calle = envio.Calle;
-                        envioToUpdate.Colonia = envio.Colonia;
-                        envioToUpdate.Municipio = envio.Municipio;
-                        envioToUpdate.Numero = envio.Numero;
-                        envioToUpdate.IdCompra = envio.IdCompra;
-                        envioToUpdate.IdPedido = envio.IdPedido;
-                        //envioToUpdate.Usuario_Id = envio.Usuario_Id;
-                        envioToUpdate.Status = envio.Status;
+                        pedidoToUpdate.FechaPedido = pedido.FechaPedido;
+                        pedidoToUpdate.EstadoPedido = pedido.EstadoPedido;
+                        pedidoToUpdate.IdCompra = pedido.IdCompra;
 
                         context.SaveChanges();
-                        result.Object = envioToUpdate;
+                        result.Object = pedidoToUpdate;
                         result.Success = true;
                     }
                     else
                     {
                         result.Success = false;
-                        result.ErrorMessage = "Envío no encontrado.";
+                        result.ErrorMessage = "Pedido no encontrado.";
                     }
                 }
             }
@@ -130,7 +121,7 @@ namespace BL
             return result;
         }
 
-        public static DL.Result Delete(int idEnvio)
+        public static DL.Result Delete(int idPedido)
         {
             var result = new DL.Result();
 
@@ -138,17 +129,17 @@ namespace BL
             {
                 using (var context = new InnotecContext())
                 {
-                    var envioToDelete = context.Envios.FirstOrDefault(e => e.IdEnvio == idEnvio);
-                    if (envioToDelete != null)
+                    var pedidoToDelete = context.Pedidos.FirstOrDefault(p => p.IdPedido == idPedido);
+                    if (pedidoToDelete != null)
                     {
-                        context.Envios.Remove(envioToDelete);
+                        context.Pedidos.Remove(pedidoToDelete);
                         context.SaveChanges();
                         result.Success = true;
                     }
                     else
                     {
                         result.Success = false;
-                        result.ErrorMessage = "Envío no encontrado.";
+                        result.ErrorMessage = "Pedido no encontrado.";
                     }
                 }
             }

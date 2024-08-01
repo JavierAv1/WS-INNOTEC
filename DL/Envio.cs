@@ -20,8 +20,13 @@ public partial class Envio
     public int? Numero { get; set; }
 
     public int? IdCompra { get; set; }
+    public int? UsuarioId { get; set; }
 
     public int? Status { get; set; }
+
+    public int? IdPedido { get; set; }
+
+    public Pedido? Pedido { get; set; }
 
     public virtual Compra? IdCompraNavigation { get; set; }
 }

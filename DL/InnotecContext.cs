@@ -36,6 +36,8 @@ public partial class InnotecContext : DbContext
 
     public virtual DbSet<Usuario> Usuarios { get; set; }
 
+    public virtual DbSet<Pedido> Pedidos { get; set; }
+
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         if (!optionsBuilder.IsConfigured)
@@ -115,6 +117,7 @@ public partial class InnotecContext : DbContext
                 .HasMaxLength(50)
                 .IsUnicode(false);
             entity.Property(e => e.IdCompra).HasColumnName("idCompra");
+            entity.Property(e => e.IdPedido).HasColumnName("idPedido"); // Añadir esta línea
             entity.Property(e => e.Municipio)
                 .HasMaxLength(50)
                 .IsUnicode(false);
@@ -122,6 +125,30 @@ public partial class InnotecContext : DbContext
             entity.HasOne(d => d.IdCompraNavigation).WithMany(p => p.Envios)
                 .HasForeignKey(d => d.IdCompra)
                 .HasConstraintName("FK__Envio__idCompra__5441852A");
+
+            entity.HasOne(d => d.Pedido)
+                .WithMany(p => p.Envios)
+                .HasForeignKey(d => d.IdPedido)
+                .HasConstraintName("FK__Envio__idPedido__54556A49"); // Añadir esta línea
+        });
+
+        modelBuilder.Entity<Pedido>(entity =>
+        {
+            entity.HasKey(e => e.IdPedido).HasName("PK__Pedido__C711D41B");
+
+            entity.ToTable("Pedido");
+
+            entity.Property(e => e.IdPedido).HasColumnName("idPedido");
+            entity.Property(e => e.IdCompra).HasColumnName("idCompra");
+            entity.Property(e => e.FechaPedido).HasColumnName("fechaPedido");
+            entity.Property(e => e.EstadoPedido)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+
+            entity.HasOne(d => d.Compra)
+                .WithMany(p => p.Pedidos)
+                .HasForeignKey(d => d.IdCompra)
+                .HasConstraintName("FK__Pedido__idCompra__54656A49");
         });
 
         modelBuilder.Entity<Producto>(entity =>

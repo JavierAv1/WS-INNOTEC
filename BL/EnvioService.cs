@@ -30,7 +30,7 @@ namespace BL
             return result;
         }
 
-        public static DL.Result GetById(int idEnvio)
+        public static DL.Result GetById(int usuarioId)
         {
             var result = new DL.Result();
 
@@ -38,7 +38,7 @@ namespace BL
             {
                 using (var context = new InnotecContext())
                 {
-                    var envio = context.Envios.FirstOrDefault(e => e.IdEnvio == idEnvio);
+                    var envio = context.Envios.Where(e => e.UsuarioId == usuarioId).ToList();
                     if (envio != null)
                     {
                         result.Object = envio;

@@ -3,8 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace WS_INNOTEC.Controllers
 {
-    [ApiVersion("1.0")]
-    [Route("api/[controller]")]
+    [ApiVersion("2.0")]
+    [Route("api/v{version:apiVersion}/[controller]")]
     [ApiController]
     public class ProductoController : ControllerBase
     {

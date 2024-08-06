@@ -1,59 +1,61 @@
 using DL;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ApiExplorer;
+using Microsoft.Extensions.Options;
+using Swashbuckle.AspNetCore.SwaggerGen;
+using WS_INNOTEC;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-builder.Services.AddControllers();
-    //.AddJsonOptions(options =>
-    //{
-    //    options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve;
-    //    options.JsonSerializerOptions.MaxDepth = 64; // Puedes ajustar la profundidad según sea necesario
-    //});
 
-// Configura la cadena de conexión para el contexto de la base de datos
+builder.Services.AddControllers();
+
+
 builder.Services.AddDbContext<InnotecContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// Configure Swagger/OpenAPI
+// Configuración de control de versiones de la API
+builder.Services.AddApiVersioning(config =>
+{
+    config.DefaultApiVersion = new ApiVersion(1, 0);
+    config.AssumeDefaultVersionWhenUnspecified = true;
+    config.ReportApiVersions = true;
+});
+
+// Configura la versión por convención (opcional)
+builder.Services.AddVersionedApiExplorer(options =>
+{
+    options.GroupNameFormat = "'v'VVV";
+    options.SubstituteApiVersionInUrl = true;
+});
+
 builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddTransient<IConfigureOptions<SwaggerGenOptions>, ConfigureSwaggerOptions>();
 builder.Services.AddSwaggerGen(c =>
 {
-    c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
-    {
-        Title = "WS-INNOTEC API",
-        Version = "v1",
-        Description = "API for WS-INNOTEC",
-        Contact = new Microsoft.OpenApi.Models.OpenApiContact
-        {
-            Name = "Support",
-            Email = "support@wsinnotec.com",
-            Url = new Uri("https://wsinnotec.com/support")
-        }
-    });
 });
 
 var app = builder.Build();
-
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "WS-INNOTEC API V1"));
+    app.UseSwaggerUI(options =>
+    {
+        var provider = app.Services.GetRequiredService<IApiVersionDescriptionProvider>();
+        foreach (var description in provider.ApiVersionDescriptions)
+        {
+            options.SwaggerEndpoint($"/swagger/{description.GroupName}/swagger.json", description.GroupName.ToUpperInvariant());
+        }
+    });
 }
 
 // Redirige la raíz a Swagger UI
-app.UseRouting();
-app.UseEndpoints(endpoints =>
-{
-    endpoints.MapGet("/", context =>
-    {
-        context.Response.Redirect("/swagger");
-        return Task.CompletedTask;
-    });
-    endpoints.MapControllers();
-});
-
 app.UseHttpsRedirection();
+app.UseRouting();
 app.UseAuthorization();
+
+app.MapGet("/", () => Results.Redirect("/swagger"));
+app.MapControllers();
+
 app.Run();

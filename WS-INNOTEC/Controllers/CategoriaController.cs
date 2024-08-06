@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations.Operations;
 
 namespace WS_INNOTEC.Controllers
 {
+    [ApiVersion("2.0")]
     [Route("api/[controller]")]
     [ApiController]
     public class CategoriaController : ControllerBase

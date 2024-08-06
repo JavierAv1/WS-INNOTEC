@@ -4,6 +4,7 @@ using DL;
 
 namespace WS_INNOTEC.Controllers
 {
+    [ApiVersion("2.0")]
     [Route("api/[controller]")]
     [ApiController]
     public class DepartamentoController : ControllerBase

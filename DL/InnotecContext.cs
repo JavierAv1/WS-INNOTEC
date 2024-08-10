@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using System;
 using System.IO;
 
 namespace DL;
@@ -19,30 +18,20 @@ public partial class InnotecContext : DbContext
     }
 
     public virtual DbSet<Categorium> Categoria { get; set; }
-
     public virtual DbSet<Compra> Compras { get; set; }
-
     public virtual DbSet<Departamento> Departamentos { get; set; }
-
     public virtual DbSet<Envio> Envios { get; set; }
-
     public virtual DbSet<Producto> Productos { get; set; }
-
     public virtual DbSet<Proveedor> Proveedors { get; set; }
-
     public virtual DbSet<Subcategorium> Subcategoria { get; set; }
-
     public virtual DbSet<TipoUsuario> TipoUsuarios { get; set; }
-
     public virtual DbSet<Usuario> Usuarios { get; set; }
-
     public virtual DbSet<Pedido> Pedidos { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         if (!optionsBuilder.IsConfigured)
         {
-            // Aquí deberías obtener la cadena de conexión desde la configuración.
             var configuration = new ConfigurationBuilder()
                 .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
                 .AddJsonFile("appsettings.json")
@@ -117,7 +106,7 @@ public partial class InnotecContext : DbContext
                 .HasMaxLength(50)
                 .IsUnicode(false);
             entity.Property(e => e.IdCompra).HasColumnName("idCompra");
-            entity.Property(e => e.IdPedido).HasColumnName("idPedido"); // Añadir esta línea
+            entity.Property(e => e.IdPedido).HasColumnName("idPedido"); // Clave foránea a Pedido
             entity.Property(e => e.Municipio)
                 .HasMaxLength(50)
                 .IsUnicode(false);
@@ -129,7 +118,7 @@ public partial class InnotecContext : DbContext
             entity.HasOne(d => d.Pedido)
                 .WithMany(p => p.Envios)
                 .HasForeignKey(d => d.IdPedido)
-                .HasConstraintName("FK__Envio__idPedido__54556A49"); // Añadir esta línea
+                .HasConstraintName("FK__Envio__idPedido__54556A49"); 
         });
 
         modelBuilder.Entity<Pedido>(entity =>
@@ -145,11 +134,17 @@ public partial class InnotecContext : DbContext
                 .HasMaxLength(50)
                 .IsUnicode(false);
 
+            entity.Property(e => e.UsuarioId).HasColumnName("usuario_id"); 
+
             entity.HasOne(d => d.Compra)
                 .WithMany(p => p.Pedidos)
                 .HasForeignKey(d => d.IdCompra)
                 .HasConstraintName("FK__Pedido__idCompra__54656A49");
+
+
         });
+
+
 
         modelBuilder.Entity<Producto>(entity =>
         {

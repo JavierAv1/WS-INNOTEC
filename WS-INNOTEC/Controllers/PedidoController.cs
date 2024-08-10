@@ -43,7 +43,7 @@ namespace WS_INNOTEC.Controllers
             var result = PedidoService.Insert(pedido);
             if (result.Success)
             {
-                return Ok(result.Object);
+                return Ok(result.Success);
             }
             else
             {

@@ -79,8 +79,17 @@ namespace BL
             {
                 result.Success = false;
                 result.ErrorMessage = ex.Message;
+                if (ex.InnerException != null)
+                {
+                    result.ErrorMessage += " Inner Exception: " + ex.InnerException.Message;
+                }
+
+                // Agregar detalles adicionales del pedido para diagnosticar
+                result.ErrorMessage += $" Pedido ID: {pedido.IdPedido}, Usuario ID: {pedido.UsuarioId}";
+
                 result.Ex = ex;
             }
+
 
             return result;
         }

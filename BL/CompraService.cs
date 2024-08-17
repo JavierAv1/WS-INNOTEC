@@ -98,23 +98,25 @@ namespace BL
             {
                 using (var context = new InnotecContext())
                 {
-                    
+
                     var compras = context.Compras
-                                        .Where(c => c.Idusuario == idUsuario)
-                                        .Include(c => c.IdproductoNavigation) 
-                     .OrderBy(c => c.IdCompra) 
-                     .Select(c => new {
-                         IdCompra = c.IdCompra,
-                         NombreProducto = c.IdproductoNavigation.Nombre,
-                         DescripcionProducto = c.IdproductoNavigation.DescripcionDelProducto,
-                         ImagenProducto = c.IdproductoNavigation.ImagenDelProducto,
-                         Cantidad = c.Cantidad,
-                         FechaDeCompra = c.FechaDeCompra,
-                         FechaVencimiento = c.FechaVencimiento,
-                         Precio = c.IdproductoNavigation.Precio,
-                         IdProducto = c.Idproducto
-                     })
-                     .ToList();
+                        .Where(c => c.Idusuario == idUsuario &&
+                                    !context.Pedidos.Any(p => p.IdCompra == c.IdCompra)) 
+                        .Include(c => c.IdproductoNavigation)
+                        .OrderBy(c => c.IdCompra)
+                        .Select(c => new {
+                            IdCompra = c.IdCompra,
+                            NombreProducto = c.IdproductoNavigation.Nombre,
+                            DescripcionProducto = c.IdproductoNavigation.DescripcionDelProducto,
+                            ImagenProducto = c.IdproductoNavigation.ImagenDelProducto,
+                            Cantidad = c.Cantidad,
+                            FechaDeCompra = c.FechaDeCompra,
+                            FechaVencimiento = c.FechaVencimiento,
+                            Precio = c.IdproductoNavigation.Precio,
+                            IdProducto = c.Idproducto
+                        })
+                        .ToList();
+
 
                     if (compras != null && compras.Count > 0)
                     {
@@ -145,18 +147,30 @@ namespace BL
             {
                 using (var context = new InnotecContext())
                 {
-                   
-                    var existingCompra = context.Compras
-                        .FirstOrDefault(c => c.Idusuario == idUsuario && c.Idproducto == idProducto);
+                    // Verifica todas las compras del usuario para el producto específico
+                    var comprasDelProducto = context.Compras
+                        .Where(c => c.Idusuario == idUsuario && c.Idproducto == idProducto)
+                        .ToList();
 
-                    if (existingCompra != null)
+                    bool compraActualizada = false;
+
+                    // Recorre todas las compras del producto para ver si alguna no está en un pedido
+                    foreach (var compra in comprasDelProducto)
                     {
-             
-                        existingCompra.Cantidad += 1;
+                        var existsInPedido = context.Pedidos.Any(p => p.IdCompra == compra.IdCompra);
+
+                        if (!existsInPedido)
+                        {
+                            // Si no está en un pedido, incrementa la cantidad y marca la compra como actualizada
+                            compra.Cantidad += 1;
+                            compraActualizada = true;
+                            break; // Sal del bucle una vez que encuentres una compra que no esté en un pedido
+                        }
                     }
-                    else
+
+                    if (!compraActualizada)
                     {
-                  
+                        // Si todas las compras están en pedidos, agrega una nueva compra
                         var newCompra = new DL.Compra
                         {
                             Idusuario = idUsuario,
@@ -168,10 +182,10 @@ namespace BL
                         context.Compras.Add(newCompra);
                     }
 
-                
+                    // Guarda los cambios
                     context.SaveChanges();
                     result.Success = true;
-                    result.Object = existingCompra ?? context.Compras.Local.FirstOrDefault(); 
+                    result.Object = comprasDelProducto.FirstOrDefault() ?? context.Compras.Local.FirstOrDefault();
                 }
             }
             catch (Exception ex)
@@ -183,6 +197,9 @@ namespace BL
 
             return result;
         }
+
+
+
 
         public static DL.Result Update(int id, DL.Compra compra)
         {

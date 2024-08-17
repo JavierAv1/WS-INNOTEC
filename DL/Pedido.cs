@@ -15,7 +15,7 @@ namespace DL
 
         public Compra? Compra { get; set; } // Relación con Compra
         public ICollection<Envio>? Envios { get; set; } // Relación con Envio
-
+        public int? IdEnvio { get; set; }
         public int? UsuarioId { get; set; }
     }
 

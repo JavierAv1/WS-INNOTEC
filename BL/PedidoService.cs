@@ -97,7 +97,7 @@ namespace BL
         public static DL.Result Update(int id, DL.Pedido pedido)
         {
             var result = new DL.Result();
-
+            id = (int)pedido.IdPedido;
             try
             {
                 using (var context = new InnotecContext())

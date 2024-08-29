@@ -65,6 +65,20 @@ namespace WS_INNOTEC.Controllers
                 return BadRequest(result.ErrorMessage);
             }
         }
+        [HttpPut("UpdateByUserName")]
+        public IActionResult Put(string userName, string password)
+        {
+            var result = UsuarioService.UpdateByUserName(userName, password);
+
+            if (result.Success)
+            {
+                return Ok(new { success = true });
+            }
+            else
+            {
+                return BadRequest(new { success = false, message = result.ErrorMessage });
+            }
+        }
 
         [HttpDelete("Delete")]
         public IActionResult Delete(int id)

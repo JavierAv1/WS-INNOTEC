@@ -257,6 +257,42 @@ namespace BL
             return result;
         }
 
+        public static DL.Result UpdateByUserName(string userName, string password)
+        {
+            var result = new DL.Result();
+            try
+            {
+                using (var context = new InnotecContext())
+                {
+                    var usuarioToUpdate = context.Usuarios.FirstOrDefault(u => u.UserName == userName);
+                    if (usuarioToUpdate != null)
+                    {
+                        // Generar y actualizar la contraseña utilizando salt
+                        var salt = CreateSalt(usuarioToUpdate.UserName);
+                        usuarioToUpdate.Contraseña = GenerateHash(password, salt);
+
+                        // Guardar cambios en la base de datos
+                        context.SaveChanges();
+
+                        result.Object = usuarioToUpdate;
+                        result.Success = true;
+                    }
+                    else
+                    {
+                        result.Success = false;
+                        result.ErrorMessage = "Usuario no encontrado.";
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                result.Success = false;
+                result.ErrorMessage = ex.Message;
+                result.Ex = ex;
+            }
+
+            return result;
+        }
 
 
         /// <summary>
